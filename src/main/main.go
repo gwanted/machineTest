@@ -5,9 +5,10 @@ import (
 	"html/template"
 	"net/http"
 	"os"
-	"encoding/json"
 	"gopkg.in/mgo.v2/bson"
 	"mydb"
+	"conf"
+	"common"
 )
 
 type Person struct {
@@ -28,15 +29,6 @@ type U struct {
 	Pwd     string    `json:"pwd"`
 }
 
-type R struct {
-	Code int64       `json:"code"`
-	Msg  string      `json:"msg"`
-	Data interface{} `json:"data"`
-}
-type RE struct {
-	Code int64 `json:"code"`
-	Msg  string`json:"msg"`
-}
 
 func Handler(w http.ResponseWriter, r *http.Request) {
 	dux := Person{
@@ -63,57 +55,58 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	user := r.FormValue("user")
 	pwd := r.FormValue("pwd")
 	if user == "" {
-		ReturnEFormat(w, 1, "user is null")
+		common.ReturnEFormat(w, 1, "user is null")
 		return
 	}
 	if pwd == "" {
-		ReturnEFormat(w, 1, "pwd is null")
+		common.ReturnEFormat(w, 1, "pwd is null")
 		return
 	}
 	var dddd U
 	db := mydb.GetDbCollection("local", "user")
 	err := db.Find(bson.M{"account":user, "pwd":pwd}).One(&dddd)
 	if err != nil {
-		ReturnEFormat(w, 1, err.Error())
+		common.ReturnEFormat(w, 1, err.Error())
 		return
 	}
-	ReturnFormat(w, 0, dddd, "SUCCESS")
+	common.ReturnFormat(w, 0, dddd, "SUCCESS")
 }
 
 func Register(w http.ResponseWriter, r *http.Request) {
 	user := r.FormValue("user")
 	pwd := r.FormValue("pwd")
 	if user == "" {
-		ReturnEFormat(w, 1, "user is null")
+		common.ReturnEFormat(w, 1, "user is null")
 		return
 	}
 	if pwd == "" {
-		ReturnEFormat(w, 1, "pwd is null")
+		common.ReturnEFormat(w, 1, "pwd is null")
 		return
 	}
 	db := mydb.GetDbCollection("local", "user")
 	var dddd []U
 	err := db.Find(bson.M{"account":user, "pwd":pwd}).All(&dddd)
 	if err != nil {
-		ReturnEFormat(w, 1, err.Error())
+		common.ReturnEFormat(w, 1, err.Error())
 		return
 	}
 	if len(dddd) != 0 {
-		ReturnEFormat(w, 1, "user is already exist")
+		common.ReturnEFormat(w, 1, "user is already exist")
 		return
 	}
 	err = db.Insert(bson.M{"account":user, "pwd":pwd, "status":"N"})
 	if err != nil {
-		ReturnEFormat(w, 1, err.Error())
+		common.ReturnEFormat(w, 1, err.Error())
 		return
 	}
-	ReturnFormat(w, 0, nil, "SUCCESS")
+	common.ReturnFormat(w, 0, nil, "SUCCESS")
 }
 
-const URLs = "127.0.0.1:27017/local"
 
 func main() {
-	mydb.InitDB(URLs)
+	mydb.InitDB(conf.App.DBAddress)
+
+
 	http.HandleFunc("/", Handler)
 	http.HandleFunc("/login", Login)
 	http.HandleFunc("/register", Register)
@@ -127,14 +120,3 @@ func checkError(err error) {
 	}
 }
 
-func ReturnFormat(w http.ResponseWriter, code int64, data interface{}, msg string) {
-	res := R{Code:code, Data:data, Msg:msg}
-	omg, _ := json.Marshal(res)
-	w.Write(omg)
-}
-
-func ReturnEFormat(w http.ResponseWriter, code int64, msg string) {
-	res := RE{Code:code, Msg:msg}
-	omg, _ := json.Marshal(res)
-	w.Write(omg)
-}

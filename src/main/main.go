@@ -1,12 +1,11 @@
 package main
 
 import (
-	"net/http"
-	"mydb"
-	"conf"
 	"app"
+	"conf"
+	"mydb"
+	"net/http"
 )
-
 
 func main() {
 	mydb.InitDB(conf.App.DBAddress)

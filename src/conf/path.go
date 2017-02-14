@@ -29,7 +29,6 @@ func AppPath(appPath ...string) string {
 // RealFilePath 返回绝对路径
 // RealFilePath("conf/app.conf")
 // =>
-// /home/elvin/GoWorkspace/src/huayuego/ziyouyizu/conf/app.conf
 func RealFilePath(relFilename string) string {
 	if strings.HasPrefix(relFilename, "/") {
 		return relFilename

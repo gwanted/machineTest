@@ -12,7 +12,7 @@ func init() {
 	App = new(tomlFile)
 }
 
-func Init(){
+func Init() {
 	_, err := toml.DecodeFile(RealFilePath("conf/app.toml"), App)
 	if err != nil {
 		panic(err.Error())

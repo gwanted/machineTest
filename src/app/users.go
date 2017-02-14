@@ -1,17 +1,17 @@
 package app
 
 import (
-	"mydb"
+	"common"
 	"model"
 	"net/http"
-	"common"
+
 	"gopkg.in/mgo.v2/bson"
 )
 
 func Login(w http.ResponseWriter, r *http.Request) {
-	user := r.FormValue("user")
+	account := r.FormValue("account")
 	pwd := r.FormValue("pwd")
-	if user == "" {
+	if account == "" {
 		common.ReturnEFormat(w, 1, "user is null")
 		return
 	}
@@ -19,20 +19,18 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		common.ReturnEFormat(w, 1, "pwd is null")
 		return
 	}
-	var dddd model.User
-	db := mydb.GetDbCollection("local", "user")
-	err := db.Find(bson.M{"account":user, "pwd":pwd}).One(&dddd)
+	user, err := model.FindUser(bson.M{"account": account, "pwd": pwd})
 	if err != nil {
 		common.ReturnEFormat(w, 1, err.Error())
 		return
 	}
-	common.ReturnFormat(w, 0, dddd, "SUCCESS")
+	common.ReturnFormat(w, 0, user, "SUCCESS")
 }
 
 func Register(w http.ResponseWriter, r *http.Request) {
-	user := r.FormValue("user")
+	account := r.FormValue("account")
 	pwd := r.FormValue("pwd")
-	if user == "" {
+	if account == "" {
 		common.ReturnEFormat(w, 1, "user is null")
 		return
 	}
@@ -40,18 +38,16 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		common.ReturnEFormat(w, 1, "pwd is null")
 		return
 	}
-	db := mydb.GetDbCollection("local", "user")
-	var dddd []model.User
-	err := db.Find(bson.M{"account":user, "pwd":pwd}).All(&dddd)
-	if err != nil {
-		common.ReturnEFormat(w, 1, err.Error())
+
+	_, err := model.FindUser(bson.M{"account": account, "pwd": pwd})
+	if err == nil {
+		common.ReturnEFormat(w, 1, "user exists")
 		return
 	}
-	if len(dddd) != 0 {
-		common.ReturnEFormat(w, 1, "user is already exist")
-		return
-	}
-	err = db.Insert(bson.M{"account":user, "pwd":pwd, "status":"N"})
+	user := model.User{}
+	user.Account = account
+	user.Pwd = pwd
+	err = user.Insert()
 	if err != nil {
 		common.ReturnEFormat(w, 1, err.Error())
 		return

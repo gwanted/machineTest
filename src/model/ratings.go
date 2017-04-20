@@ -33,7 +33,7 @@ func (m Ratings) Insert() (err error) {
 
 func FindRatings(condition bson.M) (result []*Ratings, err error) {
 	mydb.Exec(RatingsCollectionName(), func(c *mgo.Collection) {
-		err = c.Find(condition).Limit(10000).All(&result)
+		err = c.Find(condition).All(&result)
 	})
 	return
 }

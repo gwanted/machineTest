@@ -1,2 +1,3 @@
-# crud
-my first test golang project
+# machineTest
+
+使用MovieLens的数据，使用了余弦距离作为用户相似度，尝试使用"协同过滤算法"，分析出了推荐给用户的电影列表

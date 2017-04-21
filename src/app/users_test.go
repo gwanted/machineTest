@@ -1,13 +1,14 @@
 package app
 
 import (
-	"conf"
-	"mydb"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
 	"strings"
 	"testing"
+
+	"conf"
+	"mydb"
 )
 
 func InitTestDB() {

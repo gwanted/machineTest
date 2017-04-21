@@ -2,8 +2,9 @@ package mydb
 
 import (
 	"fmt"
-	"gopkg.in/mgo.v2"
 	"strings"
+
+	"gopkg.in/mgo.v2"
 )
 
 var Session *mgo.Session

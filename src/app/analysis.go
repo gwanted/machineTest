@@ -1,15 +1,17 @@
 package app
 
 import (
-	"common"
 	"fmt"
-	"gopkg.in/mgo.v2/bson"
 	"math"
-	"model"
 	"net/http"
 	"sort"
 	"strconv"
 	"time"
+
+	"gopkg.in/mgo.v2/bson"
+
+	"common"
+	"model"
 )
 
 type userDis struct {
@@ -29,6 +31,7 @@ func (a userDisList) Swap(i, j int) {
 	a[i], a[j] = a[j], a[i]
 }
 
+// Analysis get the movie list which will be push to current user
 func Analysis(w http.ResponseWriter, r *http.Request) {
 	fmt.Printf("analysis start %v\n", time.Now())
 	userID := r.FormValue("userID")

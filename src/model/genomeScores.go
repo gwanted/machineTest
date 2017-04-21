@@ -1,10 +1,12 @@
 package model
 
 import (
+	"time"
+
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
+
 	"mydb"
-	"time"
 )
 
 type GenomeScores struct {

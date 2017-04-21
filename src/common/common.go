@@ -4,34 +4,41 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/tealeg/xlsx"
 	"net/http"
 	"strings"
 	"time"
+
+	"github.com/tealeg/xlsx"
 )
 
+// R return success data
 type R struct {
 	Code int64       `json:"code"`
 	Msg  string      `json:"msg"`
 	Data interface{} `json:"data"`
 }
+
+// RE return error message
 type RE struct {
 	Code int64  `json:"code"`
 	Msg  string `json:"msg"`
 }
 
+// ReturnFormat return success data
 func ReturnFormat(w http.ResponseWriter, code int64, data interface{}, msg string) {
 	res := R{Code: code, Data: data, Msg: msg}
 	omg, _ := json.Marshal(res)
 	w.Write(omg)
 }
 
+// ReturnEFormat return error message
 func ReturnEFormat(w http.ResponseWriter, code int64, msg string) {
 	res := RE{Code: code, Msg: msg}
 	omg, _ := json.Marshal(res)
 	w.Write(omg)
 }
 
+// UnmarshalSheet transform xlsx file
 func UnmarshalSheet(sheet *xlsx.Sheet, v interface{}) (err error) {
 	fieldsMap := make(map[int][2]string)
 	data := []map[string]interface{}{}
@@ -115,15 +122,16 @@ func UnmarshalSheet(sheet *xlsx.Sheet, v interface{}) (err error) {
 	return
 }
 
+// ParseDatetime transform string to time.Time
 func ParseDatetime(str, format string) (datetime time.Time, err error) {
 	if str != "" {
 		datetime, err = time.ParseInLocation(format, str, time.Now().Location())
 
 		if err != nil || datetime.IsZero() {
-			err = errors.New(fmt.Sprintf("datetime format error. except: %s, but got %s", format, str))
+			err = fmt.Errorf("datetime format error. except: %s, but got %s", format, str)
 		}
 	} else {
-		err = errors.New("nil")
+		err = fmt.Errorf("nil")
 	}
 	return
 }

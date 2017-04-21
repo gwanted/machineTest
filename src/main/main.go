@@ -1,17 +1,19 @@
 package main
 
 import (
+	"encoding/csv"
+	"fmt"
+	"io"
+	"net/http"
+	"os"
+
+	"github.com/tealeg/xlsx"
+
 	"app"
 	"common"
 	"conf"
-	"encoding/csv"
-	"fmt"
-	"github.com/tealeg/xlsx"
-	"io"
 	"model"
 	"mydb"
-	"net/http"
-	"os"
 )
 
 func main() {

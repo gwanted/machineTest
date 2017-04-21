@@ -1,13 +1,15 @@
 package app
 
 import (
-	"common"
-	"model"
 	"net/http"
 
 	"gopkg.in/mgo.v2/bson"
+
+	"common"
+	"model"
 )
 
+// Login user login
 func Login(w http.ResponseWriter, r *http.Request) {
 	account := r.FormValue("account")
 	pwd := r.FormValue("pwd")
@@ -27,6 +29,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	common.ReturnFormat(w, 0, user, "SUCCESS")
 }
 
+// Register register user
 func Register(w http.ResponseWriter, r *http.Request) {
 	account := r.FormValue("account")
 	pwd := r.FormValue("pwd")
